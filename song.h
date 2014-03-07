@@ -3,5 +3,5 @@
 //define song struct
 typedef struct Song {
 	   char* name;
-		   int** markov;
-};
+	   int** markov;
+}Song;
