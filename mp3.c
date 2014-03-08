@@ -45,7 +45,7 @@ main(int argc, char * argv[])
 	//have user 
 	getDirectory(songs, &numSongs);
 
-	printf("%d", numSongs);
+	//printf("%d", numSongs);
 
 	int i;
 	for (i = 0; i < numSongs; i++)
@@ -89,7 +89,8 @@ int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded)
 	}
 
 	*songsAdded = songNumber;
-	qsort(songs, 2, LENGTH, compare);
+	qsort(songs, songNumber, LENGTH,
+		(int (*)(const void *, const void*)) strcmp);
 
 }
 
