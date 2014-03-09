@@ -17,6 +17,7 @@ int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded);
 void writeBinarySongs(Song songs[], int numSongs, char fName[]);
 void readBinarySongs(Song songs[], int numSongs, char fName[]);
 void printSongs(Song songs[], int numSongs);
+void initializeSongs(Song songs[], int numSongs, char songNames[][LENGTH]);
 
 
 int compare(const void *one, const void *two)
@@ -43,83 +44,38 @@ main(int argc, char * argv[])
 
 
 	//array of songs
-	int numSongs;
+	int numSongs = 3;
 	char songNames[NUMBER_OF_SONGS][LENGTH];	
 
 	//have user 
 	getDirectory(songNames, &numSongs);
-	
 	Song songs[numSongs];
-	printf("here 1\n");
+	Song songs2[numSongs];
 
-	int i;
-	for (i = 0; i < numSongs; i++) {
-		printf("here 1.5\n");
-		songs[i].name =malloc(sizeof(char) * 10 ); 
-		strcpy((songs[i].name), (songNames[i]));
-		printf("here 1.57\n");
-		songs[i].markov = (int *) calloc (numSongs, sizeof(int));
-		songs[i].markovLength = numSongs;
-	}
-	printf("here 2\n");
+	//char input;
+	//printf("Is this your first time? y/n\n");
+	//input = fgetc(stdin);
 
-	printSongs(songs, 3);
 
-	//printf("%d", numSongs);
+	//if (input == 'y') {
+	
+		//initializeSongs(songs, numSongs, songNames);
+		printf("here1\n");
+		//writeBinarySongs(songs, numSongs, "t1.bin");
+		//printf("here2\n");
+		//printSongs(songs,numSongs);
+		//printf("delete some songs\n");
+		//strcpy(songs[2].name,"songName");
 
-	//int i;
-	//for (i = 0; i < numSongs; i++)
-	//{
-	//	printf("%s\n", songs[i]);
+//	}
+//	else {
+		numSongs = 3;
+		readBinarySongs(songs2, numSongs, "t1.bin");
+		printf("here4\n");
 	//}
 
+	printSongs(songs2, numSongs);
 
-	Song arr[3];
-	Song new, new2;
-	
-	//x.name = malloc ( sizeof(char) * 10 ); 	
-	arr[0].name =malloc(sizeof(char) * 10 ); 
-	arr[0].name = "markov";
-	arr[0].markov =(int*) malloc( sizeof(int));
-	*(arr[0].markov) = 10;
-	*(arr[0].markov+1) = 4;
-
-	arr[1].name = malloc ( sizeof(char) * 10 ); 
-	arr[1].name = "Bryan";
-	arr[1].markov =(int*) malloc( sizeof(int));
-	*(arr[1].markov) = 7;
-	*(arr[1].markov+1) = 4;
-
-	arr[2].name = malloc ( sizeof(char) * 10 ); 
-	arr[2].name = "Jerr";
-	arr[2].markov =(int*) malloc( sizeof(int));
-	*(arr[2].markov) = 9;
-	*(arr[2].markov+1) = 4;
-
-	writeBinarySongs(arr,3,"test.bin");
-
-	Song arr2[3];
-	readBinarySongs(arr2,3, "test.bin");
-	printSongs(arr2, 3);
-	
-	/*FILE * data_file;
-	data_file = fopen("test.bin", "wb");
-
-	fwrite(&x, sizeof(Song), 1, data_file);
-	fwrite(&y, sizeof(Song), 1, data_file);
-	fclose(data_file);
-
-	data_file = fopen("test.bin", "rb");
-	fread(&new, sizeof(Song), 1, data_file);
-	fread(&new2, sizeof(Song), 1, data_file);
-	fclose(data_file);
-
-	printf("name: %s", new.name);
-	printf("number: %d", *(new.markov));
-	printf("name: %s", new2.name);
-	printf("number: %d", *(new2.markov));
-
-*/
 	return;
 }
 
@@ -129,9 +85,9 @@ int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded)
 {
 	char path[100];
 	printf("Please enter the directory path with .mp3 files\n");
-	fgets(path, 100, stdin);
+	//fgets(path, 100, stdin);
 	//printf("size: %d", strlen(path));
-		
+	 strcpy(path, "/home/jab489/Music");	
 	strtok(path, "\n");
 	DIR *dp; //pointer to directory
 	struct dirent *ep; // directory entry
@@ -158,6 +114,21 @@ int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded)
 
 }
 
+void initializeSongs(Song songs[], int numSongs, char songNames[][LENGTH])
+{
+
+	int i;
+	for (i = 0; i < numSongs; i++) {
+		songs[i].name =malloc(sizeof(char) * (strlen(songNames[i]) + 1) ); 
+		strcpy((songs[i].name), (songNames[i]));
+		songs[i].markov = (int *) calloc (numSongs, sizeof(int));
+		songs[i].markovLength = numSongs;
+		songs[i].nameLength = strlen(songs[i].name) + 1;
+
+	}
+	
+}
+
 void writeBinarySongs(Song songs[], int numSongs, char fName[])
 {
 
@@ -167,7 +138,16 @@ void writeBinarySongs(Song songs[], int numSongs, char fName[])
 
 	for(i=0;i<numSongs;i++)
 	{
-		fwrite(&(songs[i]), sizeof(Song), 1, data_file);
+		//TODO: make it so it saves each data member
+		//      dynamically.
+		fwrite(&songs[i].nameLength, sizeof(int), 1, data_file);
+		fwrite(&songs[i].markovLength, sizeof(int), 1, data_file);
+		int j;
+		//for(j= 0; j < songs[i].nameLength; j++)
+		//	fwrite(songs[i].name[j], sizeof(char), 1, data_file);
+		printf("hereeee\n");
+		fwrite(songs[i].name, sizeof(char), songs[i].nameLength, data_file);
+		fwrite(songs[i].markov, sizeof(int), songs[i].markovLength, data_file);
 	}
 	fclose(data_file);
 	
@@ -182,7 +162,23 @@ void readBinarySongs(Song songs[], int numSongs, char fName[])
 
 	for(i=0;i<numSongs;i++)
 	{
-		fread(&(songs[i]), sizeof(Song), 1, data_file);
+		fread(&songs[i].nameLength, sizeof(int), 1, data_file);
+		fread(&songs[i].markovLength, sizeof(int), 1, data_file);
+		printf("%d %d\n", songs[i].nameLength, songs[i].markovLength);
+		songs[i].name = malloc( sizeof(char) * songs[i].nameLength);
+		songs[i].markov = malloc( sizeof(int) * songs[i].markovLength);
+		printf("here3\n");
+		//strcpy(songs[i].name, "test");
+		//*(songs[i].markov) = 5;
+		//char * test = (char *) malloc(sizeof(char) * 50);
+		//fread(test, sizeof(char), songs[i].nameLength, data_file);
+		//printf("%c%c\n", test[0],test[1]);
+		
+		//printf("%s\n", test);
+		fread(songs[i].name, sizeof(char), songs[i].nameLength, data_file);
+		fread(songs[i].markov, sizeof(int), songs[i].markovLength, data_file);
+		//printf("%s\n", songs[i].name);
+		//fread(&(songs[i]), sizeof(Song), 1, data_file);
 	}
 	fclose(data_file);
 	
