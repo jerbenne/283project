@@ -1,5 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef SONG_H
+#define SONG_H
+
 //define song struct
 //access song->markov[i]
 typedef struct Song {
@@ -8,3 +12,5 @@ typedef struct Song {
 	   char *name;
 	   int *markov;
 }Song;
+
+#endif
