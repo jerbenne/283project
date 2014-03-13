@@ -10,6 +10,15 @@
 
 #define NUMBER_OF_SONGS 100
 #define LENGTH 40
+#define MAXLINE 100
+#define MAXARGS 5
+
+//music shell
+//command line interpreter
+//peek function - take current song and generate n number n is input
+//way to get times
+
+
 
 pid_t pid;
 void catchint(int sig);
@@ -19,6 +28,11 @@ void readBinarySongs(Song songs[], int numSongs, char fName[]);
 void printSongs(Song songs[], int numSongs);
 void initializeSongs(Song songs[], int numSongs, char songNames[][LENGTH]);
 
+//music shell functions
+void playSong(char *songName);
+void eval(char *cmdline); 
+int builtin_cmd(char **argv); 
+int parseline(const char *cmdline, char **argv); 
 
 int compare(const void *one, const void *two)
 {
@@ -29,20 +43,8 @@ int compare(const void *one, const void *two)
 main(int argc, char * argv[])
 {
 
-	//if((pid = fork()) == 0)
-	//{
-	//	setpgid(0,0);
-		//execvp(argv[1], &argv[1]);
-		//execvp(argv[1], argv);
-	//	  execvp("mpg123", argv);
-	//}
-
-	//signal(SIGINT, catchint);
-	//int status;
-	//if (waitpid(pid, &status, 0) < 0)
-	//	printf("waitfg: waitpid error");
-
-
+	
+/*Code that loads at beginning*/
 	//array of songs
 	int numSongs = 3;
 	char songNames[NUMBER_OF_SONGS][LENGTH];	
@@ -52,31 +54,151 @@ main(int argc, char * argv[])
 	Song songs[numSongs];
 	Song songs2[numSongs];
 
-	//char input;
-	//printf("Is this your first time? y/n\n");
-	//input = fgetc(stdin);
+	char input;
+	printf("Is this your first time? y/n\n");
+	input = fgetc(stdin);
+		while (getchar() != '\n');
 
-
-	//if (input == 'y') {
+	if (input == 'y') {
 	
-		//initializeSongs(songs, numSongs, songNames);
+		initializeSongs(songs, numSongs, songNames);
 		printf("here1\n");
-		//writeBinarySongs(songs, numSongs, "t1.bin");
-		//printf("here2\n");
-		//printSongs(songs,numSongs);
+		writeBinarySongs(songs, numSongs, "t1.bin");
+		printf("here2\n");
+		printSongs(songs,numSongs);
 		//printf("delete some songs\n");
 		//strcpy(songs[2].name,"songName");
-
-//	}
-//	else {
+	}
+	else {
 		numSongs = 3;
 		readBinarySongs(songs2, numSongs, "t1.bin");
-		printf("here4\n");
+		//printf("here4\n");
+		//printSongs(songs2, numSongs);
+	}
+
+
+//peek
+//shuffle
+//smartshuffle
+//play -songname
+//pause
+//unpause
+	int emit_prompt = 1;
+	char cmdline[MAXLINE];
+
+	while (1) {
+
+
+		if (emit_prompt) {
+		    printf("%s", "mp3 >");
+		    fflush(stdout);
+		}
+
+		if ((fgets(cmdline, MAXLINE, stdin) == NULL) && ferror(stdin))
+		    printf("fgets error\n");
+		if (feof(stdin)) { 
+		    fflush(stdout);
+		    exit(0);
+		}
+
+		if(cmdline == NULL)
+			continue;
+		eval(cmdline);
+		fflush(stdout);
+		fflush(stdout);
+   	 } 
+
+
+
+	//if((pid = fork()) == 0)
+	//{
+	//	setpgid(0,0);
+	//	execvp(argv[1], &argv[1]);
+	//	execvp(argv[1], argv);
+	//	  execvp("mpg123", argv);
 	//}
 
-	printSongs(songs2, numSongs);
+	//signal(SIGINT, catchint);
+	//int status;
+	//if (waitpid(pid, &status, 0) < 0)
+	//	printf("waitfg: waitpid error");
+
 
 	return;
+}
+
+
+void eval(char *cmdline) 
+{
+
+	char *argv[MAXARGS];
+	int bg;
+	pid_t pid; 
+	
+	//check if command is background so we know not to wait for it
+	parseline(cmdline, argv);
+
+	//sigset_t signals;
+	//sigemptyset(&signals);
+
+	
+
+	if(!builtin_cmd(argv)) {
+		printf("error1:\n");
+	}
+
+
+    return;
+}
+
+int builtin_cmd(char **argv) 
+{
+
+//printf("here\n");
+printf("argv: %s\n", argv[0]);
+	if (strcmp(argv[0], "quit") == 0)
+		exit(0);
+//printf("here\n");
+	if (strcmp(argv[0], "play") == 0) {
+		playSong(argv[1]);
+		return 1;
+	}
+	//if (strcmp(argv[0], "bg") == 0) {
+	//	if(argv[1] == NULL) //make sure user supplies arguments
+	//		printf("bg command requires PID or %%jobid argument\n");
+	//	else
+	//		do_bgfg(argv);
+	//	return 1;
+	//}	
+    return 0;     /* not a builtin command */
+}
+
+void playSong(char *songName)
+{
+	if((pid = fork()) == 0)
+	{
+		setpgid(0,0);
+		//execvp(argv[1], &argv[1]);
+		//execvp(argv[1], argv);
+		//printf("\n\n%s\n", songName);
+			//while (getchar() != '\n');
+		//char * argv[50];
+		
+		int n = 4;
+		char **argv = (char **) malloc( n * sizeof(char *));
+		int i;
+		for (i=0; i < n; i++) {
+			argv[i] = (char *) malloc (70);
+		}
+			
+		argv[0] = "mpg123";
+		argv[1] = "-q";
+		argv[2] = "/home/jab489/Music/Chopin.mp3";
+		argv[3] = NULL;
+		execvp("mpg123", argv);
+	}
+	
+	
 }
 
 
@@ -117,11 +239,13 @@ int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded)
 void initializeSongs(Song songs[], int numSongs, char songNames[][LENGTH])
 {
 
-	int i;
+	int i,j;
 	for (i = 0; i < numSongs; i++) {
 		songs[i].name =malloc(sizeof(char) * (strlen(songNames[i]) + 1) ); 
 		strcpy((songs[i].name), (songNames[i]));
 		songs[i].markov = (int *) calloc (numSongs, sizeof(int));
+		for (j = 0; j < numSongs; j++)
+			songs[i].markov[j] = 1;
 		songs[i].markovLength = numSongs;
 		songs[i].nameLength = strlen(songs[i].name) + 1;
 
@@ -192,7 +316,7 @@ void printSongs(Song songs[], int numSongs)
 		printf("song[%d] name: %s\n",i,songs[i].name);
 		int j;
 		for (j = 0; j < songs[i].markovLength; j++)
-			printf("song[%d] markov: %d\n",i,songs[i].markov[j]);
+			printf("song[%d] markov[%d]: %d\n",i,j,songs[i].markov[j]);
 	}
 }
 
@@ -210,4 +334,54 @@ void catchint (int sig) {
 	else
 		return;
 	
+}
+
+int parseline(const char *cmdline, char **argv) 
+{
+    static char array[MAXLINE]; /* holds local copy of command line */
+    char *buf = array;          /* ptr that traverses command line */
+    char *delim;                /* points to first space delimiter */
+    int argc;                   /* number of args */
+    int bg;                     /* background job? */
+
+    strcpy(buf, cmdline);
+    buf[strlen(buf)-1] = ' ';  /* replace trailing '\n' with space */
+    while (*buf && (*buf == ' ')) /* ignore leading spaces */
+	buf++;
+
+    /* Build the argv list */
+    argc = 0;
+    if (*buf == '\'') {
+	buf++;
+	delim = strchr(buf, '\'');
+    }
+    else {
+	delim = strchr(buf, ' ');
+    }
+
+    while (delim) {
+	argv[argc++] = buf;
+	*delim = '\0';
+	buf = delim + 1;
+	while (*buf && (*buf == ' ')) /* ignore spaces */
+	       buf++;
+
+	if (*buf == '\'') {
+	    buf++;
+	    delim = strchr(buf, '\'');
+	}
+	else {
+	    delim = strchr(buf, ' ');
+	}
+    }
+    argv[argc] = NULL;
+    
+    if (argc == 0)  /* ignore blank line */
+	return 1;
+
+    /* should the job run in the background? */
+    if ((bg = (*argv[argc-1] == '&')) != 0) {
+	argv[--argc] = NULL;
+    }
+    return bg;
 }
