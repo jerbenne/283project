@@ -1,6 +1,5 @@
 #include "markov.h"
 
-
 void testInsertValue()
 {
     int n = 10;
@@ -169,3 +168,11 @@ void insertValue(int * arr, int size, int value, int p)
     arr[p] = value;
 }
 
+/*int songToId(Song * song) {
+	int i;
+	for (i=0; i<numSongs; i++) {
+		if (strcmp(song->name, songList[i].name))
+				return i;
+	}
+	return -1;
+}*/

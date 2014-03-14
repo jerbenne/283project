@@ -1,4 +1,4 @@
-
+#include "song.h"
 
 #ifndef MARKOV_H
 #define MARKOV_H
@@ -10,5 +10,6 @@ void testInsertValue();
 void testLikelySongs();
 int randLim(int limit);
 Song * getNextSong(Song songs[], int numSongs, Song currentSong);
+int songToId(Song * song);
 
 #endif
