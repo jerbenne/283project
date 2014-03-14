@@ -20,5 +20,6 @@ extern int numSongs;
 int songToId(Song * song);
 void printAllSongs();
 void printSongs(Song * songs, int n);
+Song * getSongByString(char * str);
 
 #endif
