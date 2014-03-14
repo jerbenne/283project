@@ -12,5 +12,5 @@ lib/%.o: src/%.c
 clean:
 	rm -f $(TARGETS) lib/*.o
 
-%:lib/loadFiles.o lib/markov.o lib/%.o
+%:lib/song.o lib/loadFiles.o lib/markov.o lib/%.o
 	$(CC) -o $@ $^ $(LIBS)
