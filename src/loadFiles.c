@@ -7,19 +7,20 @@
 #define MAXLINE 100
 #define MAXARGS 5
 
-void printSongs(Song songs[], int numSongs)
+void printSongs(int numSongs)
 {
+	printf("Songs:%s\n%d", songList[0].name, numSongs);
 	int i;
 	for(i=0;i<numSongs;i++)
 	{
-		printf("song[%d] name: %s\n",i,songs[i].name);
+		printf("song[%d] name: %s\n",i,songList[i].name);
 		int j;
-		for (j = 0; j < songs[i].markovLength; j++)
-			printf("song[%d] markov[%d]: %d\n",i,j,songs[i].markov[j]);
+		for (j = 0; j < songList[i].markovLength; j++)
+			printf("song[%d] markov[%d]: %d\n",i,j,songList[i].markov[j]);
 	}
 }
 
-void writeBinarySongs(Song songs[], int numSongs, char fName[], char directory[])
+void writeBinarySongs(int numSongs, char fName[], char directory[])
 {
 
 	FILE * data_file;
@@ -42,20 +43,20 @@ void writeBinarySongs(Song songs[], int numSongs, char fName[], char directory[]
 	{
 		//TODO: make it so it saves each data member
 		//      dynamically.
-		fwrite(&songs[i].nameLength, sizeof(int), 1, data_file);
-		fwrite(&songs[i].markovLength, sizeof(int), 1, data_file);
+		fwrite(&songList[i].nameLength, sizeof(int), 1, data_file);
+		fwrite(&songList[i].markovLength, sizeof(int), 1, data_file);
 		int j;
 		//for(j= 0; j < songs[i].nameLength; j++)
 		//	fwrite(songs[i].name[j], sizeof(char), 1, data_file);
 		printf("here\n");
-		fwrite(songs[i].name, sizeof(char), songs[i].nameLength, data_file);
-		fwrite(songs[i].markov, sizeof(int), songs[i].markovLength, data_file);
+		fwrite(songList[i].name, sizeof(char), songList[i].nameLength, data_file);
+		fwrite(songList[i].markov, sizeof(int), songList[i].markovLength, data_file);
 	}
 	fclose(data_file);
 	
 }
 
-void readBinarySongs(Song songs[], char fName[], char directoryPath[])
+int readBinarySongs(char fName[], char directoryPath[])
 {
 
 	FILE * data_file;
@@ -78,32 +79,33 @@ void readBinarySongs(Song songs[], char fName[], char directoryPath[])
 
 	for(i=0;i<numSongs;i++)
 	{
-		fread(&songs[i].nameLength, sizeof(int), 1, data_file);
-		fread(&songs[i].markovLength, sizeof(int), 1, data_file);
-		printf("%d %d\n", songs[i].nameLength, songs[i].markovLength);
-		songs[i].name = malloc( sizeof(char) * songs[i].nameLength);
-		songs[i].markov = malloc( sizeof(int) * songs[i].markovLength);
+		fread(&songList[i].nameLength, sizeof(int), 1, data_file);
+		fread(&songList[i].markovLength, sizeof(int), 1, data_file);
+		printf("%d %d\n", songList[i].nameLength, songList[i].markovLength);
+		songList[i].name = malloc( sizeof(char) * songList[i].nameLength);
+		songList[i].markov = malloc( sizeof(int) * songList[i].markovLength);
 		
-		fread(songs[i].name, sizeof(char), songs[i].nameLength, data_file);
-		fread(songs[i].markov, sizeof(int), songs[i].markovLength, data_file);
+		fread(songList[i].name, sizeof(char), songList[i].nameLength, data_file);
+		fread(songList[i].markov, sizeof(int), songList[i].markovLength, data_file);
 	}
 	fclose(data_file);
 	
+	return numSongs;
 }
 
 
-void initializeSongs(Song songs[], int numSongs, char songNames[][LENGTH])
+void initializeSongs(int numSongs, char songNames[][LENGTH])
 {
 
 	int i,j;
 	for (i = 0; i < numSongs; i++) {
-		songs[i].name =malloc(sizeof(char) * (strlen(songNames[i]) + 1) ); 
-		strcpy((songs[i].name), (songNames[i]));
-		songs[i].markov = (int *) calloc (numSongs, sizeof(int));
+		songList[i].name =malloc(sizeof(char) * (strlen(songNames[i]) + 1) ); 
+		strcpy((songList[i].name), (songNames[i]));
+		songList[i].markov = (int *) calloc (numSongs, sizeof(int));
 		for (j = 0; j < numSongs; j++)
-			songs[i].markov[j] = 1;
-		songs[i].markovLength = numSongs;
-		songs[i].nameLength = strlen(songs[i].name) + 1;
+			songList[i].markov[j] = 1;
+		songList[i].markovLength = numSongs;
+		songList[i].nameLength = strlen(songList[i].name) + 1;
 
 	}
 	

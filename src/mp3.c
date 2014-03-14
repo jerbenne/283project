@@ -27,6 +27,7 @@
 pid_t pid;
 Song playing;
 Song nextSong;
+Song * songList;
 
 
 /* Signal handlers for background mp3 playing */
@@ -56,10 +57,9 @@ main(int argc, char * argv[])
 	int numSongs;
 	char songNames[NUMBER_OF_SONGS][LENGTH];	
 
-	//have user 
-	//getDirectory(songNames, &numSongs);
-	Song songs[numSongs];
-	Song songs2[numSongs];
+	//Song songs[numSongs];
+
+	songList = (Song *) malloc ( sizeof(Song) * NUMBER_OF_SONGS);
 
 	char input;
 	int validInput = 0;
@@ -73,19 +73,19 @@ main(int argc, char * argv[])
 
 		if (input == 'y') {
 	
-			readBinarySongs(songs, "t1.bin", directory);
-			printSongs(songs, numSongs);
+			numSongs = readBinarySongs("t1.bin", directory);
+			printSongs(numSongs);
 			validInput = 1;
 		}
 		else if (input == 'n') {
 
 			getDirectory(songNames, &numSongs, directory);
-			initializeSongs(songs, numSongs, songNames);
+			initializeSongs(numSongs, songNames);
 
 			/*Create new save file*/
-			writeBinarySongs(songs, numSongs, "t1.bin", directory );
+			writeBinarySongs(numSongs, "t1.bin", directory );
 
-			nextSong = songs[0];
+			nextSong = songList[0];
 			validInput = 1;
 		}
 	}
@@ -94,7 +94,7 @@ main(int argc, char * argv[])
 
 	signal(SIGINT, catchint);
 	signal(SIGCHLD, sigchld_handler); 
-    	signal(SIGQUIT, sigquit_handler); 
+    signal(SIGQUIT, sigquit_handler); 
 
 	int emit_prompt = 1;
 	char cmdline[MAXLINE];
@@ -169,6 +169,8 @@ int builtin_cmd(char **argv)
 
 void playSong(char *songName)
 {
+	
+	
 	if((pid = fork()) == 0)
 	{
 		setpgid(0,0);
@@ -190,7 +192,11 @@ void playSong(char *songName)
 	
 }
 
-
+//void lookUpSong(char *songName)
+//{
+//
+//
+//}
 
 void catchint (int sig) {	
 
