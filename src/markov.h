@@ -13,6 +13,6 @@ Song * makeExampleSongs();
 void testInsertValue();
 void testLikelySongs();
 int randLim(int limit);
-Song * getNextSong(Song songs[], int numSongs, Song currentSong);
+Song * getNextSong(Song *song);
 
 #endif

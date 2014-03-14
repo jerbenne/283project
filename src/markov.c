@@ -63,14 +63,14 @@ void testLikelySongs()
             numLikely,songs[2].name);
     printSongs(mostLikely,numLikely);
 }
-
-void testGetNextSong()
-{
-    int n;
-    Song * songs = makeExampleSongs(&n);
-    Song * rSong = getNextSong(songs,n,songs[0]);
-    printf("rSong: %s\n",rSong->name);
-}
+//~ 
+//~ void testGetNextSong()
+//~ {
+    //~ int n;
+    //~ Song * songs = makeExampleSongs(&n);
+    //~ Song * rSong = getNextSong(songs,n,songs[0]);
+    //~ printf("rSong: %s\n",rSong->name);
+//~ }
 
 int randLim(int limit) {
 /* return a random number between 0 and limit inclusive.
@@ -87,14 +87,14 @@ int randLim(int limit) {
     return retval;
 }
 
-Song * getNextSong(Song songs[], int numSongs, Song currentSong)
+Song * getNextSong(Song *song)
 {
     //the total number of songs that have been played after the current song
     int numSongsChained = 0;
     int i;
-    for(i=0;i<currentSong.markovLength;i++)
+    for(i=0;i<song->markovLength;i++)
     {
-        numSongsChained += currentSong.markov[i];
+        numSongsChained += song->markov[i];
     }
 
     int r;  //choose a random song between 0 and numSongsChained
@@ -103,12 +103,12 @@ Song * getNextSong(Song songs[], int numSongs, Song currentSong)
     int songsSoFar;  //how many songs chained through so far
 
     //iterate through to find the random song
-    for(i=0;i<currentSong.markovLength;i++)
+    for(i=0;i<song->markovLength;i++)
     {
-        songsSoFar += currentSong.markov[i];
+        songsSoFar += song->markov[i];
         if(r<=songsSoFar)
         {
-            return &songs[i];
+            return &songList[i];
         }
     }
 

@@ -196,7 +196,8 @@ void playSong(char *songName)
 		printf("%s\n", path);
 		argv[3] = NULL;
 		printf("Now playing: %s\n", argv[2]);
-		next = getNextSong();
+		current = getSongByString(songName);
+		next = getNextSong(current);
 		execvp("mpg123", argv);
 
 	}
