@@ -53,7 +53,7 @@ int compare(const void *one, const void *two)
 main(int argc, char * argv[])
 {
     srand(time(NULL));
-    testGetNextSong();
+    //testGetNextSong();
 	
 /*Code that loads at beginning*/
 	//array of songs
@@ -195,9 +195,10 @@ void playSong(char *songName)
 		strcat(argv[2], songName);
 		printf("%s\n", path);
 		argv[3] = NULL;
-		printf("Now playing: %s\n", argv[2]);
+		printf("Opening: %s\n", argv[2]);
 		current = getSongByString(songName);
 		next = getNextSong(current);
+		printStatus();
 		execvp("mpg123", argv);
 
 	}

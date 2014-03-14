@@ -16,10 +16,14 @@ typedef struct Song {
 
 extern Song * songList;
 extern int numSongs;
+extern Song * current;
+extern Song * next;
+extern Song * previous;
 
 int songToId(Song * song);
 void printAllSongs();
 void printSongs(Song * songs, int n);
 Song * getSongByString(char * str);
+void printStatus();
 
 #endif
