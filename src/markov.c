@@ -1,25 +1,5 @@
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "song.h"
-#include <dirent.h>
-#include "mp3.c"
+#include "markov.h"
 
-#define NUMBER_OF_SONGS 100
-#define LENGTH 40
-
-Song * getMostLikelySongs(Song songs[], int numSongs, Song song, int numReturn);
-void insertValue(int * arr, int size, int value, int p);
-Song * makeExampleSongs();
-void testInsertValue();
-void testLikelySongs();
-
-int main(int argc, char * argv[])
-{
-    testLikelySongs();
-    return 0;
-}
 
 void testInsertValue()
 {
@@ -85,6 +65,60 @@ void testLikelySongs()
     printSongs(mostLikely,numLikely);
 }
 
+void testGetNextSong()
+{
+    int n;
+    Song * songs = makeExampleSongs(&n);
+    Song * rSong = getNextSong(songs,n,songs[0]);
+    printf("rSong: %s\n",rSong->name);
+}
+
+int randLim(int limit) {
+/* return a random number between 0 and limit inclusive.
+ * from awesome stackoverflow man Jerry Coffin
+ */
+
+    int divisor = RAND_MAX/(limit+1);
+    int retval;
+
+    do { 
+        retval = rand() / divisor;
+    } while (retval > limit);
+
+    return retval;
+}
+
+Song * getNextSong(Song songs[], int numSongs, Song currentSong)
+{
+    //the total number of songs that have been played after the current song
+    int numSongsChained = 0;
+    int i;
+    for(i=0;i<currentSong.markovLength;i++)
+    {
+        numSongsChained += currentSong.markov[i];
+    }
+
+    int r;  //choose a random song between 0 and numSongsChained
+    r = randLim(numSongsChained);
+    int songsSoFar;  //how many songs chained through so far
+
+    //iterate through to find the random song
+    for(i=0;i<currentSong.markovLength;i++)
+    {
+        songsSoFar += currentSong.markov[i];
+        if(r<songsSoFar)
+        {
+            return &songs[i];
+        }
+    }
+
+    //something bad happened and we didn't get a song
+    return NULL;
+}
+
+
+
+//return the top numReturn songs in sorted order
 Song * getMostLikelySongs(Song songs[], int numSongs, Song song, int numReturn)
 {
     int i  //iterate over all songs in markov chain
@@ -134,3 +168,4 @@ void insertValue(int * arr, int size, int value, int p)
     }
     arr[p] = value;
 }
+

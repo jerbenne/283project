@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <dirent.h>
+#include "markov.c"
 
 #include "song.h"
 #include "loadFiles.h"
@@ -50,7 +51,8 @@ int compare(const void *one, const void *two)
 
 main(int argc, char * argv[])
 {
-
+    srand(time(NULL));
+    testGetNextSong();
 	
 /*Code that loads at beginning*/
 	//array of songs
