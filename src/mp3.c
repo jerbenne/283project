@@ -73,7 +73,7 @@ main(int argc, char * argv[])
 
 		if (input == 'y') {
 	
-			numSongs = readBinarySongs("t1.bin", directory);
+			numSongs = readBinarySongs("t1.bin");
 			printAllSongs();
 			validInput = 1;
 		}
@@ -83,7 +83,7 @@ main(int argc, char * argv[])
 			initializeSongs(numSongs, songNames);
 
 			/*Create new save file*/
-			writeBinarySongs(numSongs, "t1.bin", directory );
+			writeBinarySongs(numSongs, "t1.bin");
 
 			next = &songList[0];
 			validInput = 1;
@@ -161,6 +161,7 @@ int builtin_cmd(char **argv)
 
 	if (strcmp(argv[0], "play") == 0) {
 		playSong(argv[1]);
+		usleep(1);
 		return 1;
 	}
 
@@ -185,15 +186,17 @@ void playSong(char *songName)
 		for (i=0; i < n; i++) {
 			argv[i] = (char *) malloc (70*sizeof(char));
 		}
+		printf("%s\n", path);
 
 		argv[0] = "mpg123";
 		argv[1] = "-q";
-		strcat(argv[2], path);
-
+		strcpy(argv[2], path);
 		strcat(argv[2], "/");
 		strcat(argv[2], songName);
+		printf("%s\n", path);
 		argv[3] = NULL;
 		printf("Now playing: %s\n", argv[2]);
+		next = getNextSong();
 		execvp("mpg123", argv);
 
 	}
@@ -274,6 +277,7 @@ void sigchld_handler(int sig)
 		fprintf(stderr, "waitpid error");
 	}
 
+	
 	playSong(next->name); 
 	fflush(stdout);
 

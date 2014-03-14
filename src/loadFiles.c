@@ -10,7 +10,7 @@
 extern char * path;
 
 
-void writeBinarySongs(int numSongs, char fName[], char directory[])
+void writeBinarySongs(int numSongs, char fName[])
 {
 
 	FILE * data_file;
@@ -20,13 +20,13 @@ void writeBinarySongs(int numSongs, char fName[], char directory[])
 	/* Write number of songs */
 	fwrite(&numSongs, sizeof(int), 1, data_file);
 	
-	int directoryChars = strlen(directory) + 1;
+	int directoryChars = strlen(path) + 1;
 
 	/* Write length of directory */
 	fwrite( &directoryChars , sizeof(int), 1, data_file);
 
 	/* Write directory path */
-	fwrite(directory, sizeof(char), strlen(directory) + 1, data_file);
+	fwrite(path, sizeof(char), strlen(path) + 1, data_file);
 
 	/* Write all songs*/
 	for(i=0;i<numSongs;i++)
@@ -46,7 +46,7 @@ void writeBinarySongs(int numSongs, char fName[], char directory[])
 	
 }
 
-int readBinarySongs(char fName[], char directoryPath[])
+int readBinarySongs(char fName[])
 {
 
 	FILE * data_file;
@@ -66,8 +66,9 @@ int readBinarySongs(char fName[], char directoryPath[])
 	printf("directory length: %d\n", directoryLength);
 
 	/* Read in directory path */
-	fread(directoryPath, sizeof(char), directoryLength, data_file);
-	
+	path = (char *) malloc( sizeof(char) * 100);
+	fread(path, sizeof(char), directoryLength, data_file);
+	printf("path: %s\n", path);
 
 	for(i=0;i<numSongs;i++)
 	{

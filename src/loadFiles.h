@@ -13,8 +13,8 @@
 extern Song * songList;
 extern int numSongs;
 
-void writeBinarySongs(int numSongs, char fName[], char directory[]);
-int readBinarySongs(char fName[], char directoryPath[]);
+void writeBinarySongs(int numSongs, char fName[]);
+int readBinarySongs(char fName[]);
 int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded);
 void initializeSongs(int numSongs, char songNames[][LENGTH]);
 
