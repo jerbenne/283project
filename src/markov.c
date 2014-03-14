@@ -108,6 +108,7 @@ Song * getNextSong(Song *song)
         songsSoFar += song->markov[i];
         if(r<=songsSoFar)
         {
+			printf("gns: %s\n", songList[i].name); 
             return &songList[i];
         }
     }
