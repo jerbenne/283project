@@ -68,6 +68,8 @@ int readBinarySongs(char fName[], char directoryPath[])
 	fread(&numSongs, sizeof(int), 1, data_file);
 	printf("songs: %d\n", numSongs);
 
+	songList = (Song *) malloc ( sizeof(Song) * numSongs);
+
 	/* Read in length of directory */
 	int directoryLength;
 	fread(&directoryLength, sizeof(int), 1, data_file);
@@ -98,6 +100,8 @@ void initializeSongs(int numSongs, char songNames[][LENGTH])
 {
 
 	int i,j;
+	songList = (Song *) malloc ( sizeof(Song) * numSongs);
+
 	for (i = 0; i < numSongs; i++) {
 		songList[i].name =malloc(sizeof(char) * (strlen(songNames[i]) + 1) ); 
 		strcpy((songList[i].name), (songNames[i]));
@@ -111,6 +115,7 @@ void initializeSongs(int numSongs, char songNames[][LENGTH])
 	
 }
 
+//TODO: fix this function
 int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded, char path[])
 {
 	printf("Please enter the directory path with .mp3 files\n");

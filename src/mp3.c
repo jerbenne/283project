@@ -25,9 +25,9 @@
 
 /* Globals: */
 pid_t pid;
-Song playing;
-Song nextSong;
+Song * previous, * current, * next;
 Song * songList;
+int numSongs;
 
 
 /* Signal handlers for background mp3 playing */
@@ -54,12 +54,9 @@ main(int argc, char * argv[])
 	
 /*Code that loads at beginning*/
 	//array of songs
-	int numSongs;
 	char songNames[NUMBER_OF_SONGS][LENGTH];	
 
 	//Song songs[numSongs];
-
-	songList = (Song *) malloc ( sizeof(Song) * NUMBER_OF_SONGS);
 
 	char input;
 	int validInput = 0;
@@ -85,7 +82,7 @@ main(int argc, char * argv[])
 			/*Create new save file*/
 			writeBinarySongs(numSongs, "t1.bin", directory );
 
-			nextSong = songList[0];
+			next = &songList[0];
 			validInput = 1;
 		}
 	}
@@ -113,8 +110,9 @@ main(int argc, char * argv[])
 		    exit(0);
 		}
 
-		if(cmdline == NULL)
+		if(cmdline == NULL || cmdline[0] == '\n')
 			continue;
+
 		eval(cmdline);
 		fflush(stdout);
 		fflush(stdout);
@@ -149,6 +147,9 @@ int builtin_cmd(char **argv)
 //play -songname
 //pause
 //unpause
+	if(!argv[0])
+		return 0;
+
 	if (strcmp(argv[0], "quit") == 0) {
 		//TODO: check if process exists before killing
 		kill(pid, SIGKILL); 
@@ -266,13 +267,11 @@ void sigchld_handler(int sig)
 		fprintf(stderr, "waitpid error");
 	}
 
-	printf("child reaped\n");
-	playSong(nextSong.name); 
-	//printf("Child Terminated\n");
+	playSong(next->name); 
 	fflush(stdout);
-	//fflush(stdout);
+
 	
-    return;
+    	return;
 	
 }
 
