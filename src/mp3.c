@@ -183,14 +183,19 @@ void playSong(char *songName)
 		char **argv = (char **) malloc( n * sizeof(char *));
 		int i;
 		for (i=0; i < n; i++) {
-			argv[i] = (char *) malloc (70);
+			argv[i] = (char *) malloc (70*sizeof(char));
 		}
-			
+
 		argv[0] = "mpg123";
 		argv[1] = "-q";
-		argv[2] = "/home/jab489/Music/Chopin.mp3";
+		strcat(argv[2], path);
+
+		strcat(argv[2], "/");
+		strcat(argv[2], songName);
 		argv[3] = NULL;
+		printf("Now playing: %s\n", argv[2]);
 		execvp("mpg123", argv);
+
 	}
 	
 }
