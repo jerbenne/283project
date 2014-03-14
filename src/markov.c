@@ -99,13 +99,14 @@ Song * getNextSong(Song songs[], int numSongs, Song currentSong)
 
     int r;  //choose a random song between 0 and numSongsChained
     r = randLim(numSongsChained);
+
     int songsSoFar;  //how many songs chained through so far
 
     //iterate through to find the random song
     for(i=0;i<currentSong.markovLength;i++)
     {
         songsSoFar += currentSong.markov[i];
-        if(r<songsSoFar)
+        if(r<=songsSoFar)
         {
             return &songs[i];
         }

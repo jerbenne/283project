@@ -7,6 +7,8 @@
 #define MAXLINE 100
 #define MAXARGS 5
 
+extern char * path;
+
 void printAllSongs()
 {
 	printf("Songs:%s\n%d", songList[0].name, numSongs);
@@ -129,9 +131,10 @@ void initializeSongs(int numSongs, char songNames[][LENGTH])
 }
 
 //TODO: fix this function
-int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded, char path[])
+int getDirectory(char songs[NUMBER_OF_SONGS][LENGTH], int *songsAdded)
 {
 	printf("Please enter the directory path with .mp3 files\n");
+	path = (char *) malloc( sizeof(char) * 100);
 	fgets(path, 100, stdin);
 	//printf("size: %d", strlen(path));
 	//strcpy(path, "/home/jab489/Music");	

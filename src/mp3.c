@@ -29,6 +29,7 @@ pid_t pid;
 Song * previous, * current, * next;
 Song * songList;
 int numSongs;
+char * path;
 
 
 /* Signal handlers for background mp3 playing */
@@ -78,7 +79,7 @@ main(int argc, char * argv[])
 		}
 		else if (input == 'n') {
 
-			getDirectory(songNames, &numSongs, directory);
+			getDirectory(songNames, &numSongs);
 			initializeSongs(numSongs, songNames);
 
 			/*Create new save file*/
@@ -172,7 +173,6 @@ int builtin_cmd(char **argv)
 
 void playSong(char *songName)
 {
-	
 	
 	if((pid = fork()) == 0)
 	{
