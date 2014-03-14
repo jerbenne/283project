@@ -1,4 +1,8 @@
 #include "song.h"
+#include <dirent.h>
+#include <stdio.h>
+#include <string.h>
+#include "loadFiles.h"
 
 #ifndef MARKOV_H
 #define MARKOV_H

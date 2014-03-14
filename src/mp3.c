@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <dirent.h>
-#include "markov.c"
 
+#include "markov.h"
 #include "song.h"
 #include "loadFiles.h"
 
@@ -73,7 +73,7 @@ main(int argc, char * argv[])
 		if (input == 'y') {
 	
 			numSongs = readBinarySongs("t1.bin", directory);
-			printSongs(numSongs);
+			printAllSongs();
 			validInput = 1;
 		}
 		else if (input == 'n') {
