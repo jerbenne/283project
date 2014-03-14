@@ -14,6 +14,7 @@ void insertValue(int * arr, int size, int value, int p);
 Song * makeExampleSongs();
 void testInsertValue();
 void testLikelySongs();
+int songToId(*Song);
 
 int main(int argc, char * argv[])
 {
@@ -133,4 +134,13 @@ void insertValue(int * arr, int size, int value, int p)
         arr[i] = arr[i-1];
     }
     arr[p] = value;
+}
+
+int songToId(*Song song) {
+	int i;
+	for (i=0; i<numSongs; i++) {
+		if (strcmp(song->name, songList[i].name))
+				return i;
+	}
+	return -1;
 }
