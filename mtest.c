@@ -7,6 +7,8 @@
 
 #include <dirent.h>
 
+#define LENGTH 40
+
 pid_t pid;
 
 main(int argc, char * argv[])
@@ -30,12 +32,17 @@ main(int argc, char * argv[])
         /*Duplicate standard input with the pipe*/
         dup(fd[0]);
         char *line = NULL;
+        char * str = malloc(LENGTH*sizeof(char));
         /*read in a string from pipe*/
         size_t size;
-        //while (getline(&line, &size, 0) != -1) {
-        //    printf("child got string: %s\n",line);
+        //int c;
+        //c = getchar();
+        //while(c!=EOF)
+        //{
+        //    putchar(c);
+        //    c=getchar();
         //}
-        excelp("mpg123","mpg123",NULL);
+        execlp("mpg123","-C","mpg123","./music",NULL);
         return 0;
     }
     else
@@ -43,23 +50,14 @@ main(int argc, char * argv[])
         /*parent closes input side of pipe*/
         close(fd[0]);
         //write(fd[1],s,strlen(s)+1);
-        char * str = NULL;
+        char * str = malloc(LENGTH*sizeof(char));
         size_t size;
         int cont = 1;
         while(cont!=0)
         {
             printf("type quit or something you want mpg123 to do\n");
-            getline(&str,&size,stdin);
-           // if(getline(&str,&size,stdin)==-1) //|| strcmp(str,"quit")==0 ) 
-           // {
-           //     printf("here I am\n");
-           //     strcpy(str,"quit");
-           // }
-           // else
-           // {
-           //     printf("this branch\n"); 
-                write(fd[1],str,size);
-           // }
+            fgets(str,LENGTH,stdin);
+            write(fd[1],str,strlen(str)+1);
         }
         free(str);
     }
