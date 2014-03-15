@@ -198,7 +198,7 @@ void playSong(char *songName)
 	else
 	{
 		current = getSongByString(songName);
-		next = getNextSong(current);
+		next = getNextSong((previous!=NULL) ? previous : current);
 		printStatus();
 	}
 	
@@ -286,7 +286,8 @@ void sigchld_handler(int sig)
 			writeBinarySongs(numSongs, "t1.bin");
 		}
 	}
-	previous = current;
+	if(current!=NULL)
+		previous = current;
 	playSong(next->name); 
 	fflush(stdout);
 	
@@ -309,7 +310,7 @@ void sigquit_handler(int sig)
 void killCurrent()
 {
 	kill(pid, SIGKILL);
-	//current = NULL;
+	current = NULL;
 }
 
 
