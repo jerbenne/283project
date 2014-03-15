@@ -52,13 +52,14 @@ Song * makeExampleSongs(int * len)
 
 void testLikelySongs()
 {
+/*
     int n;
     Song * songs = makeExampleSongs(&n);
     printf("Here's the example songs list:\n");
     printSongs(songs,n);
 
     int numLikely = 2;
-    Song * mostLikely = getMostLikelySongs(songs,n,songs[2],numLikely);
+   // Song * mostLikely = getMostLikelySongs(songs[2],numLikely);
     printf("Here's the %d songs we think are most likely for %s\n",
             numLikely,songs[2].name);
     printSongs(mostLikely,numLikely);
@@ -70,7 +71,8 @@ void testLikelySongs()
     //~ Song * songs = makeExampleSongs(&n);
     //~ Song * rSong = getNextSong(songs,n,songs[0]);
     //~ printf("rSong: %s\n",rSong->name);
-//~ }
+*/
+ }
 
 int randLim(int limit) {
 /* return a random number between 0 and limit inclusive.
@@ -122,7 +124,7 @@ Song * getNextSong(Song *song)
 
 
 //return the top numReturn songs in sorted order
-Song * getMostLikelySongs(Song songs[], int numSongs, Song song, int numReturn)
+Song * getMostLikelySongs(Song * song, int numReturn)
 {
     int i  //iterate over all songs in markov chain
         , j;  //iterate over rv values
@@ -137,15 +139,15 @@ Song * getMostLikelySongs(Song songs[], int numSongs, Song song, int numReturn)
     }
     
     //actually go get the numReturn highest
-    for(i=0;i<song.markovLength;i++)
+    for(i=0;i<song->markovLength;i++)
     {
         for(j=0;j<numReturn;j++)
         {
             //store the largest value in rv[0], lowest in rv[numReturn]
-            if(song.markov[i]>markovValues[j])
+            if(song->markov[i]>markovValues[j])
             {
                 insertValue(songLocs,numReturn,i,j);
-                insertValue(markovValues,numReturn,song.markov[i],j);
+                insertValue(markovValues,numReturn,song->markov[i],j);
                 break;
             }
         }
@@ -155,11 +157,42 @@ Song * getMostLikelySongs(Song songs[], int numSongs, Song song, int numReturn)
     Song * rv = malloc(numReturn*sizeof(Song));
     for(i=0;i<numReturn;i++)
     {
-        rv[i] = songs[songLocs[i]];
+        rv[i] = songList[songLocs[i]];
     }
     return rv;
 }
 
+
+void peek(int x)
+{
+	if(x>numSongs)
+		x = numSongs;
+
+	//get top X number songs
+	Song * mostLikely = getMostLikelySongs((previous!=NULL) ? previous : current, x);
+	int i;	
+	for(i=0;i<x;i++)
+	{
+		printf("[%d]: %s\n",i+1,mostLikely[i].name);
+	}
+
+	printf("Number (Enter 0 for no change): ");
+	
+	int userChoice;
+	scanf("%d", &userChoice);
+
+	if( !(userChoice > x || userChoice < 1)) {
+		next = &mostLikely[userChoice-1];
+	}
+	else
+		printf("Next song unchanged\n");
+
+	//clear standard in
+	while (getchar() != '\n');
+
+	printStatus();
+	
+}
 
 //insert value at position p, pushing back other values
 void insertValue(int * arr, int size, int value, int p)

@@ -35,7 +35,7 @@ main(int argc, char * argv[])
         //while (getline(&line, &size, 0) != -1) {
         //    printf("child got string: %s\n",line);
         //}
-        excelp("mpg123","mpg123",NULL);
+        execlp("mpg123","mpg123", "-C", "./music/Chopin.mp3", NULL);
         return 0;
     }
     else
@@ -58,7 +58,7 @@ main(int argc, char * argv[])
            // else
            // {
            //     printf("this branch\n"); 
-                write(fd[1],str,size);
+                write(fd[1],str,size-1);
            // }
         }
         free(str);

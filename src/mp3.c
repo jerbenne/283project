@@ -157,6 +157,16 @@ int builtin_cmd(char **argv)
 		exit(0);
 	}
 
+	if (strcmp(argv[0], "peek") == 0) {
+		//TODO: check if process exists before killing
+		if(!argv[1])
+			peek(5);
+		else
+			peek(atoi(argv[1])); 
+		return 1;
+	}
+
+
 	if (strcmp(argv[0], "play") == 0) {
 		if (current==NULL)
 			playSong(argv[1]);
