@@ -38,7 +38,6 @@ void writeBinarySongs(int numSongs, char fName[])
 		int j;
 		//for(j= 0; j < songs[i].nameLength; j++)
 		//	fwrite(songs[i].name[j], sizeof(char), 1, data_file);
-		printf("here\n");
 		fwrite(songList[i].name, sizeof(char), songList[i].nameLength, data_file);
 		fwrite(songList[i].markov, sizeof(int), songList[i].markovLength, data_file);
 	}
