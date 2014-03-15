@@ -210,17 +210,26 @@ int builtin_cmd(char **argv)
     	return 0;     /* not a command */
 }
 
+/**
+ * playSong takes a currentSong name and forks it to child process where
+ * it is played in the background.
+ * @param songName pointer to the name of the song to be played
+ */
 void playSong(char *songName)
 {	
+	
+	/* Check it's a valid song */
 	if (getSongByString(songName)==NULL){
 		printf("Error: invalid song name \"%s\"\n",songName);
 		return;
 	}
+
+	/* Play the new song in a child process */
 	if((pid = fork()) == 0)
 	{
 		setpgid(0,0);
 
-		/* build command line for mpg123 */		
+		/* build command line for mpg123 to interpret */		
 		int n = 4;
 		char **argv = (char **) malloc( n * sizeof(char *));
 		int i;
@@ -229,16 +238,17 @@ void playSong(char *songName)
 		}
 
 		argv[0] = "mpg123";
-		argv[1] = "-q";
+		argv[1] = "-q"; //suppress output
 		strcpy(argv[2], path);
 		strcat(argv[2], "/");
 		strcat(argv[2], songName);
-
 		argv[3] = NULL;
+
 		execvp("mpg123", argv);
 	}
 	else
 	{
+		/* Parent updates song status */
 		current = getSongByString(songName);
 		next = getNextSong((previous!=NULL) ? previous : current);
 		printStatus();
@@ -246,14 +256,7 @@ void playSong(char *songName)
 	
 }
 
-//void lookUpSong(char *songName)
-//{
-//
-//
-//}
-
 void catchint (int sig) {	
-
 	kill(pid, SIGINT);
 	exit(0);
 }

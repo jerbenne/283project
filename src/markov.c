@@ -1,84 +1,12 @@
 #include "markov.h"
 
-void testInsertValue()
-{
-    int n = 10;
-    int * arr = calloc(n,sizeof(int));
-    int i;
-    for(i=0;i<n;i++)
-    {
-        insertValue(arr,n,i,i);
-    }
-    insertValue(arr,n,-1,0);
-    for(i=0;i<n;i++)
-    {
-        printf("arr[%d]: %d\n",i,arr[i]);
-    }
-}
 
-Song * makeExampleSongs(int * len)
-{
-    int n = (*len) = 3;
-    Song * songs = malloc(n*sizeof(Song));
-
-    //initialize all the markov chains
-    int i;
-    for(i=0;i<n;i++)
-    {
-        songs[i].markov = calloc(n,sizeof(int));
-        songs[i].markovLength=n;
-    }
-
-    //initialize first song
-    songs[0].name = "Cats";
-    songs[0].markov[0] = 5;
-    songs[0].markov[1] = 2;
-    songs[0].markov[2] = 1;
-
-    //init 2nd song
-    songs[1].name = "Chillax";
-    songs[1].markov[0] = 2;
-    songs[1].markov[1] = 1;
-    songs[1].markov[2] = 4;
-
-    //init 3rd song
-    songs[2].name = "Classical";
-    songs[2].markov[0] = 1;
-    songs[2].markov[1] = 4;
-    songs[2].markov[2] = 3;
-
-    return songs;
-}
-
-void testLikelySongs()
-{
-/*
-    int n;
-    Song * songs = makeExampleSongs(&n);
-    printf("Here's the example songs list:\n");
-    printSongs(songs,n);
-
-    int numLikely = 2;
-   // Song * mostLikely = getMostLikelySongs(songs[2],numLikely);
-    printf("Here's the %d songs we think are most likely for %s\n",
-            numLikely,songs[2].name);
-    printSongs(mostLikely,numLikely);
-}
-//~ 
-//~ void testGetNextSong()
-//~ {
-    //~ int n;
-    //~ Song * songs = makeExampleSongs(&n);
-    //~ Song * rSong = getNextSong(songs,n,songs[0]);
-    //~ printf("rSong: %s\n",rSong->name);
-*/
- }
-
-int randLim(int limit) {
-/* return a random number between 0 and limit inclusive.
- * from awesome stackoverflow man Jerry Coffin
+/**
+ * randLim returns a random number between 0 and limit.
+ * @param limit The max number.
+ * @return Random number in [0, limit]
  */
-
+int randLim(int limit) {
     int divisor = RAND_MAX/(limit+1);
     int retval;
 
@@ -89,20 +17,38 @@ int randLim(int limit) {
     return retval;
 }
 
-Song * getNextSong(Song *song)
+/**
+ * Finds the total number of song counts in the song's markov chain.
+ * @param song Song to count up the number of markov chains.
+ * @return Total number of song counts in the markov chain.
+ */
+int getTotalSongsChained(Song *song)
 {
     //the total number of songs that have been played after the current song
     int numSongsChained = 0;
     int i;
-    for(i=0;i<song->markovLength;i++)
+
+    for(i=0;i<numSongs;i++)
     {
         numSongsChained += song->markov[i];
     }
+	return numSongsChained;
+}
 
+/**
+ * getNextSong finds the next song to play based on probability of the markov chain.
+ * @param song Current song to calculate probabilities of.
+ * @return pointer to the next song.
+ */
+Song * getNextSong(Song *song)
+{
+
+	int numSongsChained=getTotalSongsChained(song);
     int r;  //choose a random song between 0 and numSongsChained
     r = rand()%numSongsChained;
 
     int songsSoFar = 0;  //how many songs chained through so far
+    int i = 0;
 
     //iterate through to find the random song
     for(i=0;i<song->markovLength;i++)
@@ -122,7 +68,12 @@ Song * getNextSong(Song *song)
 }
 
 
-
+/**
+ * 
+ * @param a The first character.
+ * @param b The character to compare to a.
+ * @return negative value if 
+ */
 //return the top numReturn songs in sorted order
 Song * getMostLikelySongs(Song * song, int numReturn)
 {
@@ -162,18 +113,35 @@ Song * getMostLikelySongs(Song * song, int numReturn)
     return rv;
 }
 
-
+/**
+ * 
+ * @param a The first character.
+ * @param b The character to compare to a.
+ * @return negative value if 
+ */
 void peek(int x)
 {
 	if(x>numSongs)
 		x = numSongs;
 
 	//get top X number songs
-	Song * mostLikely = getMostLikelySongs((previous!=NULL) ? previous : current, x);
+	Song * targetSong = (previous!=NULL) ? previous : current;
+	Song * mostLikely = getMostLikelySongs(targetSong, x);
 	int i;	
+
+	int numChained = getTotalSongsChained(targetSong);
+	printf("num chained %d:\n", numChained);
+	printf("target song: %s\n", targetSong->name);
+
 	for(i=0;i<x;i++)
 	{
-		printf("[%d]: %s\n",i+1,mostLikely[i].name);
+		float percentage;
+
+
+		int songId = songToId(&mostLikely[i]);
+
+		percentage = 100.0 *targetSong->markov[songId]/(numChained*1.0);
+		printf("[%d]: (%5.2f%%) %s \n",i+1, percentage, mostLikely[i].name);
 	}
 
 	printf("Number (Enter 0 for no change): ");
@@ -194,6 +162,12 @@ void peek(int x)
 	
 }
 
+/**
+ * 
+ * @param a The first character.
+ * @param b The character to compare to a.
+ * @return negative value if 
+ */
 //insert value at position p, pushing back other values
 void insertValue(int * arr, int size, int value, int p)
 {
@@ -205,11 +179,3 @@ void insertValue(int * arr, int size, int value, int p)
     arr[p] = value;
 }
 
-/*int songToId(Song * song) {
-	int i;
-	for (i=0; i<numSongs; i++) {
-		if (strcmp(song->name, songList[i].name))
-				return i;
-	}
-	return -1;
-}*/
