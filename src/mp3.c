@@ -65,6 +65,10 @@ main(int argc, char * argv[])
 	char input;
 	int validInput = 0;
 	char directory[100];
+	previous=NULL;
+	current=NULL;
+	next=NULL;
+	
 
 	/* Ask user if they would like to load their saved data */
 	do {
@@ -117,7 +121,7 @@ main(int argc, char * argv[])
 			continue;
 
 		eval(cmdline);
-		sleep(4);
+		sleep(1);
 		fflush(stdout);
    	 } 
 
@@ -154,14 +158,25 @@ int builtin_cmd(char **argv)
 	}
 
 	if (strcmp(argv[0], "play") == 0) {
-		playSong(argv[1]);
+		if (current==NULL)
+			playSong(argv[1]);
+		else {
+			next=getSongByString(argv[1]);
+			if(next!=NULL)
+				killCurrent();
+			else
+				printf("Error: invalid song name \"%s\"\n",argv[1]);
+		}
 		return 1;
 	}
 
 	//skip command
 	if (strcmp(argv[0], "s") == 0) {
 			//TODO: print out help function
-		killCurrent();
+		if (current!=NULL)
+			killCurrent();
+		else
+			printf("No current song to skip.\n");
 		return 1;
 	}
 
@@ -173,7 +188,11 @@ int builtin_cmd(char **argv)
 }
 
 void playSong(char *songName)
-{
+{	
+	if (getSongByString(songName)==NULL){
+		printf("Error: invalid song name \"%s\"\n",songName);
+		return;
+	}
 	if((pid = fork()) == 0)
 	{
 		setpgid(0,0);
@@ -288,7 +307,8 @@ void sigchld_handler(int sig)
 	}
 	if(current!=NULL)
 		previous = current;
-	playSong(next->name); 
+	if(next!=NULL)
+		playSong(next->name); 
 	fflush(stdout);
 	
 	
