@@ -7,6 +7,10 @@
 #ifndef MARKOV_H
 #define MARKOV_H
 
+extern Song * current;
+extern Song * next;
+extern Song * previous;
+
 Song * getMostLikelySongs(Song songs[], int numSongs, Song song, int numReturn);
 void insertValue(int * arr, int size, int value, int p);
 Song * makeExampleSongs();

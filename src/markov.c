@@ -98,16 +98,17 @@ Song * getNextSong(Song *song)
     }
 
     int r;  //choose a random song between 0 and numSongsChained
-    r = randLim(numSongsChained);
+    r = rand()%numSongsChained;
 
-    int songsSoFar;  //how many songs chained through so far
+    int songsSoFar = 0;  //how many songs chained through so far
 
     //iterate through to find the random song
     for(i=0;i<song->markovLength;i++)
     {
         songsSoFar += song->markov[i];
-        if(r<=songsSoFar)
+        if(r<songsSoFar)
         {
+	    printf("gns: %s\n", songList[i].name);
             return &songList[i];
         }
     }

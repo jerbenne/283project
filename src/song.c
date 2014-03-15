@@ -40,7 +40,7 @@ int songToId(Song * song) {
 Song * getSongByString(char * str) {
     int i;
     for(i=0;i<numSongs;i++) {
-		printf("%d: %s\n", i, songList[i].name);
+		//printf("%d: %s\n", i, songList[i].name);
         if(strcmp(str,songList[i].name)==0)
             return &songList[i];
     }

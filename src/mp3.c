@@ -43,6 +43,7 @@ void playSong(char *songName);
 void eval(char *cmdline); 
 int builtin_cmd(char **argv); 
 int parseline(const char *cmdline, char **argv); 
+void killCurrent();
 
 /* used for sorting the songs with qsort */
 int compare(const void *one, const void *two)
@@ -85,7 +86,6 @@ main(int argc, char * argv[])
 			/*Create new save file*/
 			writeBinarySongs(numSongs, "t1.bin");
 
-			next = &songList[0];
 			validInput = 1;
 		}
 	}
@@ -94,7 +94,7 @@ main(int argc, char * argv[])
 
 	signal(SIGINT, catchint);
 	signal(SIGCHLD, sigchld_handler); 
-    signal(SIGQUIT, sigquit_handler); 
+    	signal(SIGQUIT, sigquit_handler); 
 
 	int emit_prompt = 1;
 	char cmdline[MAXLINE];
@@ -117,7 +117,7 @@ main(int argc, char * argv[])
 			continue;
 
 		eval(cmdline);
-		fflush(stdout);
+		sleep(4);
 		fflush(stdout);
    	 } 
 
@@ -144,12 +144,6 @@ void eval(char *cmdline)
 int builtin_cmd(char **argv) 
 {
 
-//TODO:peek
-//shuffle
-//smartshuffle
-//play -songname
-//pause
-//unpause
 	if(!argv[0])
 		return 0;
 
@@ -161,7 +155,13 @@ int builtin_cmd(char **argv)
 
 	if (strcmp(argv[0], "play") == 0) {
 		playSong(argv[1]);
-		usleep(1);
+		return 1;
+	}
+
+	//skip command
+	if (strcmp(argv[0], "s") == 0) {
+			//TODO: print out help function
+		killCurrent();
 		return 1;
 	}
 
@@ -174,7 +174,6 @@ int builtin_cmd(char **argv)
 
 void playSong(char *songName)
 {
-	
 	if((pid = fork()) == 0)
 	{
 		setpgid(0,0);
@@ -186,21 +185,21 @@ void playSong(char *songName)
 		for (i=0; i < n; i++) {
 			argv[i] = (char *) malloc (70*sizeof(char));
 		}
-		printf("%s\n", path);
 
 		argv[0] = "mpg123";
 		argv[1] = "-q";
 		strcpy(argv[2], path);
 		strcat(argv[2], "/");
 		strcat(argv[2], songName);
-		printf("%s\n", path);
+
 		argv[3] = NULL;
-		printf("Opening: %s\n", argv[2]);
+		execvp("mpg123", argv);
+	}
+	else
+	{
 		current = getSongByString(songName);
 		next = getNextSong(current);
 		printStatus();
-		execvp("mpg123", argv);
-
 	}
 	
 }
@@ -279,10 +278,10 @@ void sigchld_handler(int sig)
 		fprintf(stderr, "waitpid error");
 	}
 
-	
+	previous = current;
 	playSong(next->name); 
 	fflush(stdout);
-
+	
 	
     	return;
 	
@@ -297,5 +296,18 @@ void sigquit_handler(int sig)
     printf("Terminating after receipt of SIGQUIT signal\n");
     exit(1);
 }
+
+//TODO: comment out the previous in the printStatus
+void killCurrent()
+{
+	kill(pid, SIGKILL);
+	current = NULL;
+}
+
+
+
+
+
+
 
 
