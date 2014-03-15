@@ -166,13 +166,30 @@ int builtin_cmd(char **argv)
 		return 1;
 	}
 
-
+	if (strcmp(argv[0], "next") == 0) {
+		if(!argv[1]) {
+			printf("Error: next <song> requires song name");
+			return 0;
+		}
+		if(getSongByString(argv[1])!=NULL) {
+			next = getSongByString(argv[1]);
+			printStatus();
+		}
+		else
+			printf("Error: invalid song name \"%s\"\n",argv[1]);
+		return 1;
+	}
 	if (strcmp(argv[0], "play") == 0) {
+		if(!argv[1]) {
+			printf("Error: play <song> requires song name");
+			return 0;
+		}
 		if (current==NULL)
 			playSong(argv[1]);
 		else {
-			next=getSongByString(argv[1]);
-			if(next!=NULL) {
+			
+			if(getSongByString(argv[1])!=NULL) {
+				next=getSongByString(argv[1]);
 				current = NULL;
 				killCurrent();
 			}
@@ -255,6 +272,7 @@ void playSong(char *songName)
 	}
 	
 }
+
 
 void catchint (int sig) {	
 	kill(pid, SIGINT);
