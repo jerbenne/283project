@@ -42,7 +42,7 @@ main(int argc, char * argv[])
         //    putchar(c);
         //    c=getchar();
         //}
-        execlp("mpg123","-C","mpg123","./music",NULL);
+        execlp("mpg123","mpg123", "-C", "./music/Chopin.mp3", NULL);
         return 0;
     }
     else
@@ -56,8 +56,22 @@ main(int argc, char * argv[])
         while(cont!=0)
         {
             printf("type quit or something you want mpg123 to do\n");
+<<<<<<< HEAD
             fgets(str,LENGTH,stdin);
             write(fd[1],str,strlen(str)+1);
+=======
+            getline(&str,&size,stdin);
+           // if(getline(&str,&size,stdin)==-1) //|| strcmp(str,"quit")==0 ) 
+           // {
+           //     printf("here I am\n");
+           //     strcpy(str,"quit");
+           // }
+           // else
+           // {
+           //     printf("this branch\n"); 
+                write(fd[1],str,size-1);
+           // }
+>>>>>>> ff0dbb1c9743cc8abe88f5b934c6aed96470543e
         }
         free(str);
     }

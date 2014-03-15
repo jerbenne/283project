@@ -10,13 +10,14 @@
 extern Song * current;
 extern Song * next;
 extern Song * previous;
+extern Song * songList;
+extern int numSongs;
 
-Song * getMostLikelySongs(Song songs[], int numSongs, Song song, int numReturn);
+Song * getMostLikelySongs(Song * song, int numReturn);
 void insertValue(int * arr, int size, int value, int p);
-Song * makeExampleSongs();
-void testInsertValue();
-void testLikelySongs();
 int randLim(int limit);
 Song * getNextSong(Song *song);
+void peek(int x);
+int getTotalSongsChained(Song *song);
 
 #endif
