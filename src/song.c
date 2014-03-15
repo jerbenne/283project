@@ -31,9 +31,10 @@ void printSongs(Song * songs, int n)
 int songToId(Song * song) {
     int i;
     for (i=0;i<numSongs;i++) {
-        if(strcmp(song->name,songList[i].name))
+        if(strcmp(song->name,songList[i].name)==0)
             return i;
     }
+    printf("error: songToId, song not found\n");
     return -1;
 }
 

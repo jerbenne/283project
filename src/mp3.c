@@ -277,7 +277,15 @@ void sigchld_handler(int sig)
 	if (waitpid(pid, NULL, WNOHANG) < 0) {
 		fprintf(stderr, "waitpid error");
 	}
-
+	
+	if(previous!=NULL&&current!=NULL){
+		int i;
+		i = songToId(current);
+		if (i>=0) {
+			previous->markov[i]++;
+			writeBinarySongs(numSongs, "t1.bin");
+		}
+	}
 	previous = current;
 	playSong(next->name); 
 	fflush(stdout);
@@ -301,7 +309,7 @@ void sigquit_handler(int sig)
 void killCurrent()
 {
 	kill(pid, SIGKILL);
-	current = NULL;
+	//current = NULL;
 }
 
 
