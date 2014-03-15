@@ -162,8 +162,10 @@ int builtin_cmd(char **argv)
 			playSong(argv[1]);
 		else {
 			next=getSongByString(argv[1]);
-			if(next!=NULL)
+			if(next!=NULL) {
+				current = NULL;
 				killCurrent();
+			}
 			else
 				printf("Error: invalid song name \"%s\"\n",argv[1]);
 		}
@@ -173,13 +175,24 @@ int builtin_cmd(char **argv)
 	//skip command
 	if (strcmp(argv[0], "s") == 0) {
 			//TODO: print out help function
+		if (current!=NULL) {
+			current = NULL;
+			killCurrent();
+		}
+		else
+			printf("No current song to skip.\n");
+		return 1;
+	}
+
+	if (strcmp(argv[0], "a") == 0) {
+			//TODO: print out help function
 		if (current!=NULL)
 			killCurrent();
 		else
 			printf("No current song to skip.\n");
 		return 1;
 	}
-
+	
 	if (strcmp(argv[0], "help") == 0) {
 			//TODO: print out help function
 	}
@@ -301,7 +314,7 @@ void sigchld_handler(int sig)
 		int i;
 		i = songToId(current);
 		if (i>=0) {
-			previous->markov[i]++;
+			previous->markov[i]= previous->markov[i] + 7;
 			writeBinarySongs(numSongs, "t1.bin");
 		}
 	}
@@ -330,7 +343,6 @@ void sigquit_handler(int sig)
 void killCurrent()
 {
 	kill(pid, SIGKILL);
-	current = NULL;
 }
 
 
