@@ -79,7 +79,7 @@ main(int argc, char * argv[])
 		if (input == 'y') {
 	
 			numSongs = readBinarySongs("t1.bin");
-			printAllSongs();
+			//printAllSongs();
 			validInput = 1;
 		}
 		else if (input == 'n') {

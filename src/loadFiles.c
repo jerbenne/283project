@@ -73,7 +73,7 @@ int readBinarySongs(char fName[])
 	{
 		fread(&songList[i].nameLength, sizeof(int), 1, data_file);
 		fread(&songList[i].markovLength, sizeof(int), 1, data_file);
-		printf("%d %d\n", songList[i].nameLength, songList[i].markovLength);
+		//printf("%d %d\n", songList[i].nameLength, songList[i].markovLength);
 		songList[i].name = malloc( sizeof(char) * songList[i].nameLength);
 		songList[i].markov = malloc( sizeof(int) * songList[i].markovLength);
 		
