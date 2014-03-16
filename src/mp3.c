@@ -1,3 +1,16 @@
+/*
+ ============================================================================
+ Name        : mp3.c
+ Author      : Josh Bauer, Jeremy Bennett, Zach Howell
+ Version     : 1.0
+ Description :  mp3.c is a smart mp3 player. It utilizes markov chains
+		to predict which song to play next based on user input.
+		It supports commands, play, skip (s), and peek.
+ ============================================================================
+ */
+
+
+
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,15 +26,6 @@
 
 #define MAXLINE 100
 #define MAXARGS 5
-
-//TODO: have peek also do queue
-//TODO: Handle Ctrl Z's
-
-//music shell
-//command line interpreter
-//peek function - take current song and generate n number n is input
-//way to get times
-//also have it show which song would be playing next
 
 
 /* Globals: */
@@ -54,13 +58,10 @@ int compare(const void *one, const void *two)
 main(int argc, char * argv[])
 {
     srand(time(NULL));
-    //testGetNextSong();
 	
-/*Code that loads at beginning*/
+	/*Code that loads at beginning*/
 	//array of songs
 	char songNames[NUMBER_OF_SONGS][LENGTH];	
-
-	//Song songs[numSongs];
 
 	char input;
 	int validInput = 0;
@@ -79,7 +80,6 @@ main(int argc, char * argv[])
 		if (input == 'y') {
 	
 			numSongs = readBinarySongs("t1.bin");
-			//printAllSongs();
 			validInput = 1;
 		}
 		else if (input == 'n') {
@@ -128,7 +128,9 @@ main(int argc, char * argv[])
 	return;
 }
 
-
+/**
+ * Evaluate the command user enters by passing it to builtint_cmd.
+ */
 void eval(char *cmdline) 
 {
 
@@ -145,6 +147,11 @@ void eval(char *cmdline)
     return;
 }
 
+
+/**
+ * Handles commands: quit, peek, next, play, skip and help.
+ *
+ */
 int builtin_cmd(char **argv) 
 {
 
@@ -152,15 +159,13 @@ int builtin_cmd(char **argv)
 		return 0;
 
 	if (strcmp(argv[0], "quit") == 0) {
-		//TODO: check if process exists before killing
 		kill(pid, SIGKILL); 
 		exit(0);
 	}
 
 	if (strcmp(argv[0], "peek") == 0) {
-		//TODO: check if process exists before killing
 		if(!argv[1])
-			peek(5);
+			peek(5); //default peek is 5
 		else
 			peek(atoi(argv[1])); 
 		return 1;
@@ -201,7 +206,6 @@ int builtin_cmd(char **argv)
 
 	//skip command
 	if (strcmp(argv[0], "s") == 0) {
-			//TODO: print out help function
 		if (current!=NULL) {
 			current = NULL;
 			killCurrent();
@@ -211,8 +215,9 @@ int builtin_cmd(char **argv)
 		return 1;
 	}
 
+	//a is for accept, it accepts a song as though it was played 
+	//but allows the user to skip.
 	if (strcmp(argv[0], "a") == 0) {
-			//TODO: print out help function
 		if (current!=NULL)
 			killCurrent();
 		else
@@ -221,7 +226,11 @@ int builtin_cmd(char **argv)
 	}
 	
 	if (strcmp(argv[0], "help") == 0) {
-			//TODO: print out help function
+		printf("Available commands: \n");
+		printf("play (songName) \n");
+		printf("peek (optional number): \n");
+		printf("next (song name)\n");
+		printf("quit \n");	
 	}
 	
     	return 0;     /* not a command */
@@ -230,7 +239,6 @@ int builtin_cmd(char **argv)
 /**
  * playSong takes a currentSong name and forks it to child process where
  * it is played in the background.
- * @param songName pointer to the name of the song to be played
  */
 void playSong(char *songName)
 {	
@@ -279,16 +287,21 @@ void catchint (int sig) {
 	exit(0);
 }
 
+
+/**
+ * parseLine parses the input command line. We got this code from
+ * our tiny shell assignment.
+ */
 int parseline(const char *cmdline, char **argv) 
 {
-    static char array[MAXLINE]; /* holds local copy of command line */
-    char *buf = array;          /* ptr that traverses command line */
-    char *delim;                /* points to first space delimiter */
-    int argc;                   /* number of args */
-    int bg;                     /* background job? */
+    static char array[MAXLINE]; 
+    char *buf = array;          
+    char *delim;               
+    int argc;                   
+    int bg;                     
 
     strcpy(buf, cmdline);
-    buf[strlen(buf)-1] = ' ';  /* replace trailing '\n' with space */
+    buf[strlen(buf)-1] = ' ';  
     while (*buf && (*buf == ' ')) /* ignore leading spaces */
 	buf++;
 
@@ -322,21 +335,15 @@ int parseline(const char *cmdline, char **argv)
     if (argc == 0)  /* ignore blank line */
 	return 1;
 
-    /* should the job run in the background? */
-    if ((bg = (*argv[argc-1] == '&')) != 0) {
-	argv[--argc] = NULL;
-    }
-    return bg;
+    return 0;
 }
 
-
+/**
+ * sigchld handler handles when the background song dies.
+ */
 void sigchld_handler(int sig) 
 {
 
-	//TODO: fix this section, code not tested
-	/* Wait for dead processes.
-	 * Use non-blocking call to be sure this signal handler will not
-	 * block if a child was cleaned up in another part of the program. */
 	if (waitpid(pid, NULL, WNOHANG) < 0) {
 		fprintf(stderr, "waitpid error");
 	}
@@ -370,7 +377,6 @@ void sigquit_handler(int sig)
     exit(1);
 }
 
-//TODO: comment out the previous in the printStatus
 void killCurrent()
 {
 	kill(pid, SIGKILL);
