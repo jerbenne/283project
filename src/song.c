@@ -1,6 +1,8 @@
 #include "song.h"
 
-
+/**
+ * prints song id, name, and markov chains for all songs
+ */
 void printAllSongs()
 {
 	printf("Songs:%s\n%d", songList[0].name, numSongs);
@@ -14,6 +16,10 @@ void printAllSongs()
 	}
 }
 
+/**
+ * prints song id, name, and markov chains for all songs in list songs with
+ * length n
+ */
 void printSongs(Song * songs, int n)
 {
 	printf("Songs:%s\n%d", songs[0].name, n);
@@ -27,7 +33,10 @@ void printSongs(Song * songs, int n)
 	}
 }
 
-//return the location in song list of a song
+/**
+ * returns song id given a pointer to a Song struct
+ * song id is used in songList and markov chains
+ */
 int songToId(Song * song) {
     int i;
     for (i=0;i<numSongs;i++) {
@@ -37,7 +46,9 @@ int songToId(Song * song) {
     printf("error: songToId, song not found\n");
     return -1;
 }
-
+/**
+ * returns pointer to song struct given a song name
+ */
 Song * getSongByString(char * str) {
     int i;
     for(i=0;i<numSongs;i++) {
@@ -47,7 +58,9 @@ Song * getSongByString(char * str) {
     }
     return NULL;
 }
-
+/**
+ * prints previous, current, and next song
+ */
 void printStatus() {
 	printf("Previous: %s\n", (previous!=NULL) ? previous->name : "None");
 	printf("Current: %s\n", (current!=NULL) ? current->name : "None");
