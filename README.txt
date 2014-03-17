@@ -10,3 +10,4 @@ For example: play "test.mp3"
    To peek ahead at what are the top predicted songs, enter peek with the number of songs. For example, peek 10.
    To make one of these the next song played, enter that number (or enter 0 for no change).
    
+   Note: make sure your mp3 song names do not contain blanks.
