@@ -2,7 +2,7 @@ Getting started:
 
 1. Build the mp3 executable with the make file.
 2. Locate a folder where all of your .mp3's are located. 
-3. Run the program, when it asks to load, say no.
+3. Run the program, when it asks to load, say no. Now enter the path found in step 1.
 4. To start playing, use the play command with the name of a song.
 For example: play "test.mp3"
 5. To skip a song, enter s.
